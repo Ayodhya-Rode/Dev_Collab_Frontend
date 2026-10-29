@@ -4,6 +4,8 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
+import AuthLayout from "../components/AuthLayout";
+import { buttonClass, errorClass, inputClass, labelClass, linkClass } from "../components/ui";
 
 export default function Register() {
   const { user, login } = useAuth();
@@ -24,12 +26,7 @@ export default function Register() {
     setSubmitting(true);
 
     try {
-      await api.post("/auth/register", {
-        organizationName,
-        name,
-        email,
-        password,
-      });
+      await api.post("/auth/register", { organizationName, name, email, password });
       await login(email, password);
       navigate("/");
     } catch (err) {
@@ -44,59 +41,70 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded bg-white p-6 shadow"
-      >
-        <h1 className="mb-4 text-2xl font-bold">Create your organization</h1>
+    <AuthLayout
+      title="Create your organization"
+      subtitle="You will be the Admin of this workspace"
+    >
+      {error && <p className={errorClass}>{error}</p>}
 
-        {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="organizationName" className={labelClass}>Organization name</label>
+          <input
+            id="organizationName"
+            type="text"
+            placeholder="Acme Corp"
+            value={organizationName}
+            onChange={(e) => setOrganizationName(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <input
-          type="text"
-          placeholder="Organization name"
-          value={organizationName}
-          onChange={(e) => setOrganizationName(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
-        <input
-          type="text"
-          placeholder="Your name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
-        <input
-          type="password"
-          placeholder="Password (min 8 characters)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
+        <div>
+          <label htmlFor="name" className={labelClass}>Your name</label>
+          <input
+            id="name"
+            type="text"
+            placeholder="Rahul Patil"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded bg-blue-600 p-2 text-white disabled:opacity-50"
-        >
-          {submitting ? "Creating..." : "Register"}
+        <div>
+          <label htmlFor="email" className={labelClass}>Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="password" className={labelClass}>Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="At least 8 characters"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={inputClass}
+          />
+        </div>
+
+        <button type="submit" disabled={submitting} className={buttonClass}>
+          {submitting ? "Creating..." : "Create organization"}
         </button>
-
-        <p className="mt-3 text-sm">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600">
-            Login
-          </Link>
-        </p>
       </form>
-    </div>
+
+      <p className="mt-6 text-center text-sm text-slate-500">
+        Already have an account?{" "}
+        <Link to="/login" className={linkClass}>Log in</Link>
+      </p>
+    </AuthLayout>
   );
 }

@@ -1,13 +1,22 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import api from "../api/axios";
+import AuthLayout from "../components/AuthLayout";
+import {
+  buttonClass,
+  errorClass,
+  inputClass,
+  labelClass,
+  linkClass,
+  successClass,
+} from "../components/ui";
 
 export default function ResetPassword() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const token = searchParams.get("token");
+  const navigate = useNavigate();
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,10 +47,7 @@ export default function ResetPassword() {
 
     setSubmitting(true);
     try {
-      const res = await api.post("/auth/reset-password", {
-        token,
-        newPassword,
-      });
+      const res = await api.post("/auth/reset-password", { token, newPassword });
       setMessage(res.data.message);
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -56,58 +62,64 @@ export default function ResetPassword() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="w-full max-w-sm rounded bg-white p-6 shadow">
-          <p className="mb-3 text-red-600">Invalid reset link.</p>
-          <Link to="/forgot-password" className="text-blue-600">
-            Request a new one
-          </Link>
-        </div>
-      </div>
+      <AuthLayout title="Invalid link" subtitle="This password reset link is not valid.">
+        <p className={errorClass}>The reset link is missing its token.</p>
+        <Link to="/forgot-password" className={linkClass}>
+          Request a new reset link
+        </Link>
+      </AuthLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded bg-white p-6 shadow"
-      >
-        <h1 className="mb-4 text-2xl font-bold">Reset password</h1>
+    <AuthLayout
+      title="Set a new password"
+      subtitle="Choose a strong password you have not used before."
+    >
+      {error && <p className={errorClass}>{error}</p>}
+      {message && (
+        <p className={successClass}>{message}. Redirecting to login...</p>
+      )}
 
-        {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
-        {message && (
-          <p className="mb-3 text-sm text-green-600">
-            {message}. Redirecting to login...{" "}
-            <Link to="/login" className="underline">
-              Login now
-            </Link>
-          </p>
-        )}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="newPassword" className={labelClass}>
+            New password
+          </label>
+          <input
+            id="newPassword"
+            type="password"
+            placeholder="At least 8 characters"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <input
-          type="password"
-          placeholder="New password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
-        <input
-          type="password"
-          placeholder="Confirm new password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
+        <div>
+          <label htmlFor="confirmPassword" className={labelClass}>
+            Confirm new password
+          </label>
+          <input
+            id="confirmPassword"
+            type="password"
+            placeholder="Re-enter your password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <button
-          type="submit"
-          disabled={submitting || !!message}
-          className="w-full rounded bg-blue-600 p-2 text-white disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting || !!message} className={buttonClass}>
           {submitting ? "Resetting..." : "Reset password"}
         </button>
       </form>
-    </div>
+
+      <p className="mt-6 text-center text-sm text-slate-500">
+        <Link to="/login" className={linkClass}>
+          Back to login
+        </Link>
+      </p>
+    </AuthLayout>
   );
 }

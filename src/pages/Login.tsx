@@ -3,6 +3,8 @@ import type { FormEvent } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import AuthLayout from "../components/AuthLayout";
+import { buttonClass, errorClass, inputClass, labelClass, linkClass } from "../components/ui";
 
 export default function Login() {
   const { user, login } = useAuth();
@@ -35,47 +37,43 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded bg-white p-6 shadow"
-      >
-        <h1 className="mb-4 text-2xl font-bold">Login</h1>
+    <AuthLayout title="Welcome back" subtitle="Log in to your workspace">
+      {error && <p className={errorClass}>{error}</p>}
 
-        {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className={labelClass}>Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
+        <div>
+          <label htmlFor="password" className={labelClass}>Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded bg-blue-600 p-2 text-white disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className={buttonClass}>
           {submitting ? "Logging in..." : "Login"}
         </button>
-
-        <div className="mt-3 flex justify-between text-sm">
-          <Link to="/forgot-password" className="text-blue-600">
-            Forgot password?
-          </Link>
-          <Link to="/register" className="text-blue-600">
-            Sign Up
-          </Link>
-        </div>
       </form>
-    </div>
+
+      <div className="mt-6 flex justify-between text-sm">
+        <Link to="/forgot-password" className={linkClass}>Forgot password?</Link>
+        <Link to="/register" className={linkClass}>Create account</Link>
+      </div>
+    </AuthLayout>
   );
 }

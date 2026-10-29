@@ -3,6 +3,15 @@ import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import api from "../api/axios";
+import AuthLayout from "../components/AuthLayout";
+import {
+  buttonClass,
+  errorClass,
+  inputClass,
+  labelClass,
+  linkClass,
+  successClass,
+} from "../components/ui";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -31,38 +40,34 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded bg-white p-6 shadow"
-      >
-        <h1 className="mb-4 text-2xl font-bold">Forgot password</h1>
+    <AuthLayout
+      title="Forgot your password?"
+      subtitle="Enter your email and we will send you a reset link"
+    >
+      {error && <p className={errorClass}>{error}</p>}
+      {message && <p className={successClass}>{message}</p>}
 
-        {error && <p className="mb-3 text-sm text-red-600">{error}</p>}
-        {message && <p className="mb-3 text-sm text-green-600">{message}</p>}
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="email" className={labelClass}>Email</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="you@company.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={inputClass}
+          />
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="mb-3 w-full rounded border p-2"
-        />
-
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded bg-blue-600 p-2 text-white disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className={buttonClass}>
           {submitting ? "Sending..." : "Send reset link"}
         </button>
-
-        <p className="mt-3 text-sm">
-          <Link to="/login" className="text-blue-600">
-            Back to login
-          </Link>
-        </p>
       </form>
-    </div>
+
+      <p className="mt-6 text-center text-sm text-slate-500">
+        <Link to="/login" className={linkClass}>Back to login</Link>
+      </p>
+    </AuthLayout>
   );
 }
