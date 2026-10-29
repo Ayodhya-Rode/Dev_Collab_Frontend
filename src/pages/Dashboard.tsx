@@ -1,18 +1,22 @@
+import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-4">
-      <h1 className="text-3xl font-bold text-blue-600">Hello {user?.name}</h1>
-      <p className="text-gray-600">Role: {user?.role}</p>
-      <button
-        onClick={logout}
-        className="rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600"
+    <div>
+      <h1 className="text-2xl font-bold">Welcome, {user?.name}</h1>
+      <p className="mt-1 text-slate-400">
+        You are signed in as {user?.role.replace("_", " ").toLowerCase()}.
+      </p>
+
+      <Link
+        to="/teams"
+        className="mt-6 inline-block rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-400"
       >
-        Logout
-      </button>
+        View teams
+      </Link>
     </div>
   );
 }
