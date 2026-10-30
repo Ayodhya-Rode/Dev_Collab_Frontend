@@ -361,6 +361,9 @@ export default function Projects() {
                 Lead: <span className="text-slate-200">{p.teamLeader.name}</span>
               </p>
               <p>
+                Created by: <span className="text-slate-200">{p.createdBy.name}</span>
+              </p>
+              <p>
                 Teams:{" "}
                 <span className="text-slate-200">
                   {p.teams.map((t) => t.team.name).join(", ")}

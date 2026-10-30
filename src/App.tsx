@@ -11,7 +11,7 @@ import Teams from "./pages/Teams";
 import TeamDetails from "./pages/TeamDetails";
 import { Toaster } from "react-hot-toast";
 import Projects from "./pages/Projects";
-
+import ProjectDetails from "./pages/ProjectDetails";
 
 export default function App() {
   return (
@@ -46,6 +46,7 @@ export default function App() {
           <Route path="/teams" element={<Teams />} />
           <Route path="/teams/:id" element={<TeamDetails />} />
           <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:id" element={<ProjectDetails />} />
         </Route>
       </Routes>
     </>

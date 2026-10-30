@@ -76,5 +76,18 @@ export interface ProjectSummary {
   createdAt: string;
   updatedAt: string;
   teamLeader: { id: string; name: string; email: string };
+  createdBy: { id: string; name: string };
   teams: { team: { id: string; name: string } }[];
+}
+
+export interface ProjectDetail extends Omit<ProjectSummary, "teams"> {
+  createdBy: { id: string; name: string };
+  teams: {
+    team: {
+      id: string;
+      name: string;
+      teamLeader: { id: string; name: string } | null;
+      _count: { members: number };
+    };
+  }[];
 }
