@@ -10,6 +10,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Teams from "./pages/Teams";
 import TeamDetails from "./pages/TeamDetails";
 import { Toaster } from "react-hot-toast";
+import Projects from "./pages/Projects";
+
 
 export default function App() {
   return (
@@ -43,6 +45,7 @@ export default function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/teams" element={<Teams />} />
           <Route path="/teams/:id" element={<TeamDetails />} />
+          <Route path="/projects" element={<Projects />} />
         </Route>
       </Routes>
     </>

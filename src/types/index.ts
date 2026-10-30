@@ -52,3 +52,29 @@ export interface PendingInvitation {
   team: { id: string; name: string } | null;
   invitedBy: { id: string; name: string };
 }
+
+export type ProjectStatus =
+  | "PLANNING"
+  | "ACTIVE"
+  | "ON_HOLD"
+  | "COMPLETED"
+  | "ARCHIVED";
+
+export type Priority = "LOW" | "MEDIUM" | "HIGH";
+
+export interface ProjectSummary {
+  id: string;
+  organizationId: string;
+  name: string;
+  description: string | null;
+  status: ProjectStatus;
+  priority: Priority;
+  startDate: string | null;
+  dueDate: string | null;
+  teamLeaderId: string;
+  createdById: string;
+  createdAt: string;
+  updatedAt: string;
+  teamLeader: { id: string; name: string; email: string };
+  teams: { team: { id: string; name: string } }[];
+}
