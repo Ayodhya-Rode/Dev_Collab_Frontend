@@ -8,9 +8,16 @@ import { useAuth } from "../context/AuthContext";
 import { apiMessage } from "../lib/errors";
 import { PRIORITY_LABELS } from "../lib/project";
 import { COLUMN_DOT, TASK_STATUSES, TASK_STATUS_LABELS } from "../lib/task";
-import type { Assignee, Priority, ProjectStatus, Task, TaskStatus } from "../types";
+import type {
+  Assignee,
+  Priority,
+  ProjectStatus,
+  Task,
+  TaskStatus,
+} from "../types";
 import TaskCard from "./TaskCard";
 import { buttonClass, errorClass, inputClass, labelClass } from "./ui";
+import TaskDrawer from "./TaskDrawer";
 
 const dateInputClass = `${inputClass} [color-scheme:dark]`;
 
@@ -43,6 +50,7 @@ export default function TaskBoard({
   const [assigneeId, setAssigneeId] = useState("");
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [openTaskId, setOpenTaskId] = useState<string | null>(null);
 
   const archived = projectStatus === "ARCHIVED";
   const isLead = user?.role === "TEAM_LEADER" && user.id === projectLeadId;
@@ -144,6 +152,11 @@ export default function TaskBoard({
     }
   };
 
+  const refreshAll = async () => {
+    await loadTasks();
+    onChanged();
+  };
+
   const handleCreate = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError("");
@@ -214,7 +227,9 @@ export default function TaskBoard({
           {formError && <p className={errorClass}>{formError}</p>}
 
           <div>
-            <label htmlFor="taskTitle" className={labelClass}>Title</label>
+            <label htmlFor="taskTitle" className={labelClass}>
+              Title
+            </label>
             <input
               id="taskTitle"
               type="text"
@@ -240,7 +255,9 @@ export default function TaskBoard({
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label htmlFor="taskPriority" className={labelClass}>Priority</label>
+              <label htmlFor="taskPriority" className={labelClass}>
+                Priority
+              </label>
               <select
                 id="taskPriority"
                 value={priority}
@@ -248,13 +265,17 @@ export default function TaskBoard({
                 className={inputClass}
               >
                 {(Object.keys(PRIORITY_LABELS) as Priority[]).map((p) => (
-                  <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
+                  <option key={p} value={p}>
+                    {PRIORITY_LABELS[p]}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="taskDue" className={labelClass}>Due date</label>
+              <label htmlFor="taskDue" className={labelClass}>
+                Due date
+              </label>
               <input
                 id="taskDue"
                 type="date"
@@ -265,7 +286,9 @@ export default function TaskBoard({
             </div>
 
             <div>
-              <label htmlFor="taskAssignee" className={labelClass}>Assign to</label>
+              <label htmlFor="taskAssignee" className={labelClass}>
+                Assign to
+              </label>
               <select
                 id="taskAssignee"
                 value={assigneeId}
@@ -284,18 +307,24 @@ export default function TaskBoard({
 
           {assignees.length === 0 && (
             <p className="text-xs text-slate-500">
-              No Developers in the linked teams yet. Invite a Developer to one of
-              the teams to assign tasks.
+              No Developers in the linked teams yet. Invite a Developer to one
+              of the teams to assign tasks.
             </p>
           )}
 
-          <button type="submit" disabled={submitting} className={`${buttonClass} !w-auto`}>
+          <button
+            type="submit"
+            disabled={submitting}
+            className={`${buttonClass} !w-auto`}
+          >
             {submitting ? "Creating..." : "Create task"}
           </button>
         </form>
       )}
 
-      {loading && <p className="mt-6 text-sm text-slate-400">Loading tasks...</p>}
+      {loading && (
+        <p className="mt-6 text-sm text-slate-400">Loading tasks...</p>
+      )}
       {loadError && <p className={`${errorClass} mt-6`}>{loadError}</p>}
 
       {!loading && !loadError && (
@@ -308,8 +337,12 @@ export default function TaskBoard({
               >
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className={`h-2 w-2 rounded-full ${COLUMN_DOT[status]}`} />
-                    <h3 className="text-sm font-semibold">{TASK_STATUS_LABELS[status]}</h3>
+                    <span
+                      className={`h-2 w-2 rounded-full ${COLUMN_DOT[status]}`}
+                    />
+                    <h3 className="text-sm font-semibold">
+                      {TASK_STATUS_LABELS[status]}
+                    </h3>
                   </div>
                   <span className="rounded-full bg-slate-800 px-2 py-0.5 text-xs text-slate-300">
                     {columns[status].length}
@@ -325,11 +358,12 @@ export default function TaskBoard({
                         snapshot.isDraggingOver ? "bg-slate-800/60" : ""
                       }`}
                     >
-                      {columns[status].length === 0 && !snapshot.isDraggingOver && (
-                        <p className="py-4 text-center text-xs text-slate-500">
-                          No tasks
-                        </p>
-                      )}
+                      {columns[status].length === 0 &&
+                        !snapshot.isDraggingOver && (
+                          <p className="py-4 text-center text-xs text-slate-500">
+                            No tasks
+                          </p>
+                        )}
 
                       {columns[status].map((task, index) => (
                         <Draggable
@@ -343,6 +377,7 @@ export default function TaskBoard({
                               ref={dragProvided.innerRef}
                               {...dragProvided.draggableProps}
                               {...dragProvided.dragHandleProps}
+                              onClick={() => setOpenTaskId(task.id)}
                             >
                               <TaskCard
                                 task={task}
@@ -362,6 +397,17 @@ export default function TaskBoard({
             ))}
           </div>
         </DragDropContext>
+      )}
+
+      {openTaskId && (
+        <TaskDrawer
+          key={openTaskId}
+          taskId={openTaskId}
+          projectId={projectId}
+          archived={archived}
+          onClose={() => setOpenTaskId(null)}
+          onChanged={refreshAll}
+        />
       )}
     </div>
   );
