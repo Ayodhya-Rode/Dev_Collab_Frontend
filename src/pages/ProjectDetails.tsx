@@ -22,6 +22,7 @@ import {
 } from "../components/ui";
 import ProgressBar from "../components/ProgressBar";
 import StatTile from "../components/StatTile";
+import TaskBoard from "../components/TaskBoard";
 
 const apiMessage = (err: unknown, fallback: string) =>
   axios.isAxiosError(err)
@@ -640,10 +641,12 @@ export default function ProjectDetails() {
         </div>
       </div>
 
-      {/* Task board comes in the next step */}
-      <div className="rounded-xl border border-dashed border-slate-700 p-6 text-center text-sm text-slate-400">
-        The task board will appear here.
-      </div>
+      <TaskBoard
+        projectId={project.id}
+        projectStatus={project.status}
+        projectLeadId={project.teamLeaderId}
+        onChanged={loadProject}
+      />
 
       <ConfirmDialog
         open={confirm !== null}

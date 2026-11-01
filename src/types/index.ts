@@ -103,3 +103,30 @@ export interface ProjectStats {
   progress: number;
   byStatus: Record<TaskStatus, number>;
 }
+
+export interface Task {
+  id: string;
+  organizationId: string;
+  projectId: string;
+  title: string;
+  description: string | null;
+  assignedToId: string | null;
+  createdById: string;
+  status: TaskStatus;
+  priority: Priority;
+  position: number;
+  dueDate: string | null;
+  completedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  assignedTo: { id: string; name: string; email: string } | null;
+  createdBy: { id: string; name: string };
+  isOverdue: boolean;
+}
+
+export interface Assignee {
+  id: string;
+  name: string;
+  email: string;
+  teams: string[];
+}
