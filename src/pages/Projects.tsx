@@ -7,8 +7,19 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import { PriorityBadge, StatusBadge } from "../components/ProjectBadges";
 import { formatDate, PRIORITY_LABELS, STATUS_LABELS } from "../lib/project";
-import type { Priority, ProjectStatus, ProjectSummary, TeamSummary } from "../types";
-import { buttonClass, errorClass, inputClass, labelClass } from "../components/ui";
+import type {
+  Priority,
+  ProjectStatus,
+  ProjectSummary,
+  TeamSummary,
+} from "../types";
+import {
+  buttonClass,
+  errorClass,
+  inputClass,
+  labelClass,
+} from "../components/ui";
+import ProgressBar from "../components/ProgressBar";
 
 const dateInputClass = `${inputClass} [color-scheme:dark]`;
 
@@ -20,7 +31,9 @@ export default function Projects() {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | ProjectStatus>("ALL");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | ProjectStatus>(
+    "ALL",
+  );
 
   const [teams, setTeams] = useState<TeamSummary[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -64,7 +77,8 @@ export default function Projects() {
   const creatableTeams = useMemo(
     () =>
       teams.filter(
-        (t) => t.status === "ACTIVE" && (isAdmin || t.teamLeaderId === user?.id),
+        (t) =>
+          t.status === "ACTIVE" && (isAdmin || t.teamLeaderId === user?.id),
       ),
     [teams, isAdmin, user?.id],
   );
@@ -92,7 +106,9 @@ export default function Projects() {
 
   const toggleTeam = (teamId: string) => {
     setSelectedTeamIds((prev) =>
-      prev.includes(teamId) ? prev.filter((id) => id !== teamId) : [...prev, teamId],
+      prev.includes(teamId)
+        ? prev.filter((id) => id !== teamId)
+        : [...prev, teamId],
     );
   };
 
@@ -120,7 +136,9 @@ export default function Projects() {
       return;
     }
     if (isAdmin && !effectiveLeaderId) {
-      setError("Select a team that has a Team Leader, then choose the project lead");
+      setError(
+        "Select a team that has a Team Leader, then choose the project lead",
+      );
       return;
     }
     if (startDate && dueDate && dueDate < startDate) {
@@ -172,7 +190,9 @@ export default function Projects() {
         <div className="flex items-center gap-3">
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as "ALL" | ProjectStatus)}
+            onChange={(e) =>
+              setStatusFilter(e.target.value as "ALL" | ProjectStatus)
+            }
             className={`${inputClass} !w-auto`}
             aria-label="Filter by status"
           >
@@ -203,7 +223,9 @@ export default function Projects() {
           {error && <p className={errorClass}>{error}</p>}
 
           <div>
-            <label htmlFor="projectName" className={labelClass}>Project name</label>
+            <label htmlFor="projectName" className={labelClass}>
+              Project name
+            </label>
             <input
               id="projectName"
               type="text"
@@ -229,7 +251,9 @@ export default function Projects() {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label htmlFor="priority" className={labelClass}>Priority</label>
+              <label htmlFor="priority" className={labelClass}>
+                Priority
+              </label>
               <select
                 id="priority"
                 value={priority}
@@ -237,13 +261,17 @@ export default function Projects() {
                 className={inputClass}
               >
                 {(Object.keys(PRIORITY_LABELS) as Priority[]).map((p) => (
-                  <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
+                  <option key={p} value={p}>
+                    {PRIORITY_LABELS[p]}
+                  </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label htmlFor="startDate" className={labelClass}>Start date</label>
+              <label htmlFor="startDate" className={labelClass}>
+                Start date
+              </label>
               <input
                 id="startDate"
                 type="date"
@@ -254,7 +282,9 @@ export default function Projects() {
             </div>
 
             <div>
-              <label htmlFor="dueDate" className={labelClass}>Due date</label>
+              <label htmlFor="dueDate" className={labelClass}>
+                Due date
+              </label>
               <input
                 id="dueDate"
                 type="date"
@@ -276,7 +306,10 @@ export default function Projects() {
             ) : (
               <div className="space-y-2">
                 {creatableTeams.map((t) => (
-                  <label key={t.id} className="flex cursor-pointer items-center gap-2 text-sm">
+                  <label
+                    key={t.id}
+                    className="flex cursor-pointer items-center gap-2 text-sm"
+                  >
                     <input
                       type="checkbox"
                       checked={selectedTeamIds.includes(t.id)}
@@ -285,7 +318,9 @@ export default function Projects() {
                     />
                     <span>{t.name}</span>
                     <span className="text-xs text-slate-500">
-                      {t.teamLeader ? `Leader: ${t.teamLeader.name}` : "No Team Leader"}
+                      {t.teamLeader
+                        ? `Leader: ${t.teamLeader.name}`
+                        : "No Team Leader"}
                     </span>
                   </label>
                 ))}
@@ -295,7 +330,9 @@ export default function Projects() {
 
           {isAdmin ? (
             <div>
-              <label htmlFor="leader" className={labelClass}>Project lead</label>
+              <label htmlFor="leader" className={labelClass}>
+                Project lead
+              </label>
               <select
                 id="leader"
                 value={effectiveLeaderId}
@@ -309,7 +346,9 @@ export default function Projects() {
                     : "Choose the project lead"}
                 </option>
                 {leaderOptions.map((l) => (
-                  <option key={l.id} value={l.id}>{l.name}</option>
+                  <option key={l.id} value={l.id}>
+                    {l.name}
+                  </option>
                 ))}
               </select>
             </div>
@@ -353,15 +392,19 @@ export default function Projects() {
             </div>
 
             {p.description && (
-              <p className="mt-3 line-clamp-2 text-sm text-slate-400">{p.description}</p>
+              <p className="mt-3 line-clamp-2 text-sm text-slate-400">
+                {p.description}
+              </p>
             )}
 
             <div className="mt-4 space-y-1 text-sm text-slate-400">
               <p>
-                Lead: <span className="text-slate-200">{p.teamLeader.name}</span>
+                Lead:{" "}
+                <span className="text-slate-200">{p.teamLeader.name}</span>
               </p>
               <p>
-                Created by: <span className="text-slate-200">{p.createdBy.name}</span>
+                Created by:{" "}
+                <span className="text-slate-200">{p.createdBy.name}</span>
               </p>
               <p>
                 Teams:{" "}
@@ -370,7 +413,19 @@ export default function Projects() {
                 </span>
               </p>
               <p>
-                Due: <span className="text-slate-200">{formatDate(p.dueDate)}</span>
+                Due:{" "}
+                <span className="text-slate-200">{formatDate(p.dueDate)}</span>
+              </p>
+            </div>
+            <div className="mt-4">
+              <ProgressBar value={p.stats.progress} />
+              <p className="mt-2 text-xs text-slate-400">
+                {p.stats.completed}/{p.stats.total} tasks done
+                {p.stats.overdue > 0 && (
+                  <span className="ml-2 text-red-300">
+                    · {p.stats.overdue} overdue
+                  </span>
+                )}
               </p>
             </div>
           </Link>

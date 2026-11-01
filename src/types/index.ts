@@ -78,6 +78,7 @@ export interface ProjectSummary {
   teamLeader: { id: string; name: string; email: string };
   createdBy: { id: string; name: string };
   teams: { team: { id: string; name: string } }[];
+  stats: ProjectStats;
 }
 
 export interface ProjectDetail extends Omit<ProjectSummary, "teams"> {
@@ -90,4 +91,15 @@ export interface ProjectDetail extends Omit<ProjectSummary, "teams"> {
       _count: { members: number };
     };
   }[];
+}
+
+export type TaskStatus = "TODO" | "IN_PROGRESS" | "IN_REVIEW" | "COMPLETED";
+
+export interface ProjectStats {
+  total: number;
+  completed: number;
+  pending: number;
+  overdue: number;
+  progress: number;
+  byStatus: Record<TaskStatus, number>;
 }

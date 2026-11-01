@@ -8,8 +8,20 @@ import { useAuth } from "../context/AuthContext";
 import ConfirmDialog from "../components/ConfirmDialog";
 import { PriorityBadge, StatusBadge } from "../components/ProjectBadges";
 import { formatDate, PRIORITY_LABELS, STATUS_LABELS } from "../lib/project";
-import type { Priority, ProjectDetail, ProjectStatus, TeamSummary } from "../types";
-import { buttonClass, errorClass, inputClass, labelClass } from "../components/ui";
+import type {
+  Priority,
+  ProjectDetail,
+  ProjectStatus,
+  TeamSummary,
+} from "../types";
+import {
+  buttonClass,
+  errorClass,
+  inputClass,
+  labelClass,
+} from "../components/ui";
+import ProgressBar from "../components/ProgressBar";
+import StatTile from "../components/StatTile";
 
 const apiMessage = (err: unknown, fallback: string) =>
   axios.isAxiosError(err)
@@ -94,7 +106,8 @@ export default function ProjectDetails() {
   const editableTeams = useMemo(
     () =>
       allTeams.filter(
-        (t) => t.status === "ACTIVE" && (isAdmin || t.teamLeaderId === user?.id),
+        (t) =>
+          t.status === "ACTIVE" && (isAdmin || t.teamLeaderId === user?.id),
       ),
     [allTeams, isAdmin, user?.id],
   );
@@ -118,7 +131,10 @@ export default function ProjectDetails() {
     return (
       <div>
         <p className={errorClass}>Project not found.</p>
-        <Link to="/projects" className="text-sm text-indigo-300 hover:text-indigo-200">
+        <Link
+          to="/projects"
+          className="text-sm text-indigo-300 hover:text-indigo-200"
+        >
           Back to projects
         </Link>
       </div>
@@ -188,7 +204,8 @@ export default function ProjectDetails() {
   const handleArchive = () => {
     setConfirm({
       title: "Archive project",
-      message: "Archived projects become read-only for Team Leaders. You can restore it later.",
+      message:
+        "Archived projects become read-only for Team Leaders. You can restore it later.",
       confirmLabel: "Archive",
       onConfirm: async () => {
         try {
@@ -220,7 +237,9 @@ export default function ProjectDetails() {
 
     setSavingLeader(true);
     try {
-      await api.patch(`/projects/${project.id}/leader`, { teamLeaderId: newLeaderId });
+      await api.patch(`/projects/${project.id}/leader`, {
+        teamLeaderId: newLeaderId,
+      });
       toast.success("Project lead changed");
       setNewLeaderId("");
       await loadProject();
@@ -234,14 +253,18 @@ export default function ProjectDetails() {
   const startTeamEdit = () => {
     const editableIds = new Set(editableTeams.map((t) => t.id));
     setSelectedTeamIds(
-      project.teams.map((t) => t.team.id).filter((teamId) => editableIds.has(teamId)),
+      project.teams
+        .map((t) => t.team.id)
+        .filter((teamId) => editableIds.has(teamId)),
     );
     setEditingTeams(true);
   };
 
   const toggleTeam = (teamId: string) => {
     setSelectedTeamIds((prev) =>
-      prev.includes(teamId) ? prev.filter((x) => x !== teamId) : [...prev, teamId],
+      prev.includes(teamId)
+        ? prev.filter((x) => x !== teamId)
+        : [...prev, teamId],
     );
   };
 
@@ -273,7 +296,10 @@ export default function ProjectDetails() {
 
   return (
     <div className="space-y-6">
-      <Link to="/projects" className="text-sm text-indigo-300 hover:text-indigo-200">
+      <Link
+        to="/projects"
+        className="text-sm text-indigo-300 hover:text-indigo-200"
+      >
         &larr; Back to projects
       </Link>
 
@@ -320,7 +346,9 @@ export default function ProjectDetails() {
         ) : (
           <form onSubmit={handleSaveEdit} className="space-y-4">
             <div>
-              <label htmlFor="editName" className={labelClass}>Project name</label>
+              <label htmlFor="editName" className={labelClass}>
+                Project name
+              </label>
               <input
                 id="editName"
                 type="text"
@@ -331,7 +359,9 @@ export default function ProjectDetails() {
             </div>
 
             <div>
-              <label htmlFor="editDescription" className={labelClass}>Description</label>
+              <label htmlFor="editDescription" className={labelClass}>
+                Description
+              </label>
               <textarea
                 id="editDescription"
                 rows={3}
@@ -343,21 +373,29 @@ export default function ProjectDetails() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="editStatus" className={labelClass}>Status</label>
+                <label htmlFor="editStatus" className={labelClass}>
+                  Status
+                </label>
                 <select
                   id="editStatus"
                   value={editStatus}
-                  onChange={(e) => setEditStatus(e.target.value as ProjectStatus)}
+                  onChange={(e) =>
+                    setEditStatus(e.target.value as ProjectStatus)
+                  }
                   className={inputClass}
                 >
                   {statusOptions.map((s) => (
-                    <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                    <option key={s} value={s}>
+                      {STATUS_LABELS[s]}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="editPriority" className={labelClass}>Priority</label>
+                <label htmlFor="editPriority" className={labelClass}>
+                  Priority
+                </label>
                 <select
                   id="editPriority"
                   value={editPriority}
@@ -365,13 +403,17 @@ export default function ProjectDetails() {
                   className={inputClass}
                 >
                   {(Object.keys(PRIORITY_LABELS) as Priority[]).map((p) => (
-                    <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
+                    <option key={p} value={p}>
+                      {PRIORITY_LABELS[p]}
+                    </option>
                   ))}
                 </select>
               </div>
 
               <div>
-                <label htmlFor="editStart" className={labelClass}>Start date</label>
+                <label htmlFor="editStart" className={labelClass}>
+                  Start date
+                </label>
                 <input
                   id="editStart"
                   type="date"
@@ -382,7 +424,9 @@ export default function ProjectDetails() {
               </div>
 
               <div>
-                <label htmlFor="editDue" className={labelClass}>Due date</label>
+                <label htmlFor="editDue" className={labelClass}>
+                  Due date
+                </label>
                 <input
                   id="editDue"
                   type="date"
@@ -394,10 +438,18 @@ export default function ProjectDetails() {
             </div>
 
             <div className="flex gap-3">
-              <button type="submit" disabled={saving} className={`${buttonClass} !w-auto`}>
+              <button
+                type="submit"
+                disabled={saving}
+                className={`${buttonClass} !w-auto`}
+              >
                 {saving ? "Saving..." : "Save changes"}
               </button>
-              <button type="button" onClick={() => setEditing(false)} className={smallButton}>
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                className={smallButton}
+              >
                 Cancel
               </button>
             </div>
@@ -442,7 +494,9 @@ export default function ProjectDetails() {
                   : "Choose a new project lead"}
               </option>
               {leaderOptions.map((l) => (
-                <option key={l.id} value={l.id}>{l.name}</option>
+                <option key={l.id} value={l.id}>
+                  {l.name}
+                </option>
               ))}
             </select>
             <button
@@ -457,8 +511,8 @@ export default function ProjectDetails() {
 
         {isAdmin && (
           <p className="mt-2 text-xs text-slate-500">
-            The lead must be the Team Leader of one of the linked teams. Link the
-            new lead&apos;s team first if it is not listed.
+            The lead must be the Team Leader of one of the linked teams. Link
+            the new lead&apos;s team first if it is not listed.
           </p>
         )}
       </div>
@@ -466,7 +520,9 @@ export default function ProjectDetails() {
       {/* Linked teams */}
       <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">Linked teams ({project.teams.length})</h2>
+          <h2 className="font-semibold">
+            Linked teams ({project.teams.length})
+          </h2>
           {canEdit && !editingTeams && (
             <button onClick={startTeamEdit} className={smallButton}>
               Manage teams
@@ -477,7 +533,10 @@ export default function ProjectDetails() {
         {!editingTeams ? (
           <ul className="mt-3 divide-y divide-slate-800">
             {project.teams.map(({ team }) => (
-              <li key={team.id} className="flex items-center justify-between gap-3 py-3">
+              <li
+                key={team.id}
+                className="flex items-center justify-between gap-3 py-3"
+              >
                 <div>
                   <Link
                     to={`/teams/${team.id}`}
@@ -486,11 +545,13 @@ export default function ProjectDetails() {
                     {team.name}
                   </Link>
                   <p className="text-xs text-slate-400">
-                    Leader: {team.teamLeader ? team.teamLeader.name : "Not assigned"}
+                    Leader:{" "}
+                    {team.teamLeader ? team.teamLeader.name : "Not assigned"}
                   </p>
                 </div>
                 <span className="text-xs text-slate-400">
-                  {team._count.members} member{team._count.members === 1 ? "" : "s"}
+                  {team._count.members} member
+                  {team._count.members === 1 ? "" : "s"}
                 </span>
               </li>
             ))}
@@ -498,11 +559,16 @@ export default function ProjectDetails() {
         ) : (
           <div className="mt-3">
             {editableTeams.length === 0 ? (
-              <p className="text-sm text-slate-400">No teams available to link.</p>
+              <p className="text-sm text-slate-400">
+                No teams available to link.
+              </p>
             ) : (
               <div className="space-y-2">
                 {editableTeams.map((t) => (
-                  <label key={t.id} className="flex cursor-pointer items-center gap-2 text-sm">
+                  <label
+                    key={t.id}
+                    className="flex cursor-pointer items-center gap-2 text-sm"
+                  >
                     <input
                       type="checkbox"
                       checked={selectedTeamIds.includes(t.id)}
@@ -511,7 +577,9 @@ export default function ProjectDetails() {
                     />
                     <span>{t.name}</span>
                     <span className="text-xs text-slate-500">
-                      {t.teamLeader ? `Leader: ${t.teamLeader.name}` : "No Team Leader"}
+                      {t.teamLeader
+                        ? `Leader: ${t.teamLeader.name}`
+                        : "No Team Leader"}
                     </span>
                   </label>
                 ))}
@@ -520,8 +588,8 @@ export default function ProjectDetails() {
 
             {!isAdmin && (
               <p className="mt-3 text-xs text-slate-500">
-                Teams led by other Team Leaders stay linked; only an Admin can unlink
-                them.
+                Teams led by other Team Leaders stay linked; only an Admin can
+                unlink them.
               </p>
             )}
 
@@ -533,7 +601,10 @@ export default function ProjectDetails() {
               >
                 {savingTeams ? "Saving..." : "Save teams"}
               </button>
-              <button onClick={() => setEditingTeams(false)} className={smallButton}>
+              <button
+                onClick={() => setEditingTeams(false)}
+                className={smallButton}
+              >
                 Cancel
               </button>
             </div>
@@ -541,9 +612,37 @@ export default function ProjectDetails() {
         )}
       </div>
 
-      {/* Tasks (Phase 5) */}
+      {/* Progress */}
+      <div className="rounded-xl border border-slate-800 bg-slate-900 p-5">
+        <h2 className="font-semibold">Progress</h2>
+
+        <div className="mt-4">
+          <ProgressBar value={project.stats.progress} />
+        </div>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <StatTile label="Total tasks" value={project.stats.total} />
+          <StatTile
+            label="Completed"
+            value={project.stats.completed}
+            tone="text-emerald-300"
+          />
+          <StatTile
+            label="Pending"
+            value={project.stats.pending}
+            tone="text-amber-300"
+          />
+          <StatTile
+            label="Overdue"
+            value={project.stats.overdue}
+            tone="text-red-300"
+          />
+        </div>
+      </div>
+
+      {/* Task board comes in the next step */}
       <div className="rounded-xl border border-dashed border-slate-700 p-6 text-center text-sm text-slate-400">
-        Tasks, progress and overdue counts will appear here.
+        The task board will appear here.
       </div>
 
       <ConfirmDialog
