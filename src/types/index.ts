@@ -130,3 +130,24 @@ export interface Assignee {
   email: string;
   teams: string[];
 }
+
+export interface TaskComment {
+  id: string;
+  taskId: string;
+  userId: string;
+  comment: string;
+  createdAt: string;
+  updatedAt: string;
+  user: { id: string; name: string; role: Role };
+}
+
+export interface ActivityEntry {
+  id: string;
+  userId: string;
+  entityType: string;
+  entityId: string;
+  action: string;
+  details: Record<string, unknown> | null;
+  createdAt: string;
+  user: { id: string; name: string; role: Role };
+}

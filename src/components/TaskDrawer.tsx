@@ -8,6 +8,7 @@ import { formatDueDate, TASK_STATUSES, TASK_STATUS_LABELS } from "../lib/task";
 import type { Assignee, Priority, Task, TaskStatus } from "../types";
 import ConfirmDialog from "./ConfirmDialog";
 import { buttonClass, inputClass, labelClass } from "./ui";
+import TaskDiscussion from "./TaskDiscussion";
 
 const dateInputClass = `${inputClass} [color-scheme:dark]`;
 
@@ -55,6 +56,7 @@ export default function TaskDrawer({
   const [statusSaving, setStatusSaving] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [version, setVersion] = useState(0);
 
   const load = useCallback(async () => {
     try {
@@ -62,6 +64,7 @@ export default function TaskDrawer({
       setTask(res.data.task);
       setPermissions(res.data.permissions);
       setNotFound(false);
+      setVersion((v) => v + 1);
     } catch {
       setNotFound(true);
     } finally {
@@ -94,7 +97,9 @@ export default function TaskDrawer({
   }, [onClose, confirmDelete]);
 
   const canEdit =
-    !archived && !!permissions && (permissions.canManage || permissions.canEditDescription);
+    !archived &&
+    !!permissions &&
+    (permissions.canManage || permissions.canEditDescription);
   const canChangeStatus = !archived && !!permissions?.canUpdateStatus;
 
   const startEdit = () => {
@@ -217,17 +222,23 @@ export default function TaskDrawer({
             </div>
 
             <div>
-              <label htmlFor="taskStatus" className={labelClass}>Status</label>
+              <label htmlFor="taskStatus" className={labelClass}>
+                Status
+              </label>
               {canChangeStatus ? (
                 <select
                   id="taskStatus"
                   value={task.status}
                   disabled={statusSaving}
-                  onChange={(e) => handleStatusChange(e.target.value as TaskStatus)}
+                  onChange={(e) =>
+                    handleStatusChange(e.target.value as TaskStatus)
+                  }
                   className={inputClass}
                 >
                   {TASK_STATUSES.map((s) => (
-                    <option key={s} value={s}>{TASK_STATUS_LABELS[s]}</option>
+                    <option key={s} value={s}>
+                      {TASK_STATUS_LABELS[s]}
+                    </option>
                   ))}
                 </select>
               ) : (
@@ -242,7 +253,9 @@ export default function TaskDrawer({
                   {task.assignedTo ? task.assignedTo.name : "Unassigned"}
                 </p>
                 {task.assignedTo && (
-                  <p className="text-xs text-slate-400">{task.assignedTo.email}</p>
+                  <p className="text-xs text-slate-400">
+                    {task.assignedTo.email}
+                  </p>
                 )}
               </div>
               <div>
@@ -255,12 +268,16 @@ export default function TaskDrawer({
               </div>
               <div>
                 <p className="text-xs text-slate-500">Created</p>
-                <p className="mt-1">{new Date(task.createdAt).toLocaleString()}</p>
+                <p className="mt-1">
+                  {new Date(task.createdAt).toLocaleString()}
+                </p>
               </div>
               {task.completedAt && (
                 <div className="col-span-2">
                   <p className="text-xs text-slate-500">Completed</p>
-                  <p className="mt-1">{new Date(task.completedAt).toLocaleString()}</p>
+                  <p className="mt-1">
+                    {new Date(task.completedAt).toLocaleString()}
+                  </p>
                 </div>
               )}
             </div>
@@ -285,10 +302,20 @@ export default function TaskDrawer({
                 </button>
               )}
               {canManage && (
-                <button onClick={() => setConfirmDelete(true)} className={dangerButton}>
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className={dangerButton}
+                >
                   Delete task
                 </button>
               )}
+            </div>
+            <div className="border-t border-slate-800 pt-5">
+              <TaskDiscussion
+                taskId={task.id}
+                archived={archived}
+                refreshKey={version}
+              />
             </div>
           </div>
         )}
@@ -297,7 +324,9 @@ export default function TaskDrawer({
           <form onSubmit={handleSave} className="mt-6 space-y-4">
             {permissions.canManage ? (
               <div>
-                <label htmlFor="editTitle" className={labelClass}>Title</label>
+                <label htmlFor="editTitle" className={labelClass}>
+                  Title
+                </label>
                 <input
                   id="editTitle"
                   type="text"
@@ -308,13 +337,15 @@ export default function TaskDrawer({
               </div>
             ) : (
               <p className="text-xs text-slate-500">
-                You can edit the description of a task assigned to you. The other
-                fields are managed by the project lead.
+                You can edit the description of a task assigned to you. The
+                other fields are managed by the project lead.
               </p>
             )}
 
             <div>
-              <label htmlFor="editDescription" className={labelClass}>Description</label>
+              <label htmlFor="editDescription" className={labelClass}>
+                Description
+              </label>
               <textarea
                 id="editDescription"
                 rows={5}
@@ -328,7 +359,9 @@ export default function TaskDrawer({
               <>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
-                    <label htmlFor="editPriority" className={labelClass}>Priority</label>
+                    <label htmlFor="editPriority" className={labelClass}>
+                      Priority
+                    </label>
                     <select
                       id="editPriority"
                       value={priority}
@@ -336,13 +369,17 @@ export default function TaskDrawer({
                       className={inputClass}
                     >
                       {(Object.keys(PRIORITY_LABELS) as Priority[]).map((p) => (
-                        <option key={p} value={p}>{PRIORITY_LABELS[p]}</option>
+                        <option key={p} value={p}>
+                          {PRIORITY_LABELS[p]}
+                        </option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <label htmlFor="editDue" className={labelClass}>Due date</label>
+                    <label htmlFor="editDue" className={labelClass}>
+                      Due date
+                    </label>
                     <input
                       id="editDue"
                       type="date"
@@ -354,7 +391,9 @@ export default function TaskDrawer({
                 </div>
 
                 <div>
-                  <label htmlFor="editAssignee" className={labelClass}>Assign to</label>
+                  <label htmlFor="editAssignee" className={labelClass}>
+                    Assign to
+                  </label>
                   <select
                     id="editAssignee"
                     value={assigneeId}
@@ -378,10 +417,18 @@ export default function TaskDrawer({
             )}
 
             <div className="flex gap-3">
-              <button type="submit" disabled={saving} className={`${buttonClass} !w-auto`}>
+              <button
+                type="submit"
+                disabled={saving}
+                className={`${buttonClass} !w-auto`}
+              >
                 {saving ? "Saving..." : "Save changes"}
               </button>
-              <button type="button" onClick={() => setEditing(false)} className={smallButton}>
+              <button
+                type="button"
+                onClick={() => setEditing(false)}
+                className={smallButton}
+              >
                 Cancel
               </button>
             </div>
