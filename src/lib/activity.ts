@@ -66,7 +66,9 @@ export const describeActivity = (entry: ActivityEntry): string => {
 
     case "TASK_UPDATED": {
       const parts = describeChanges(asRecord(details.changes));
-      return parts.length > 0 ? `${who} ${parts.join(", ")}` : `${who} updated this task`;
+      return parts.length > 0
+        ? `${who} ${parts.join(", ")}`
+        : `${who} updated this task`;
     }
 
     case "TASK_STATUS_CHANGED":
@@ -77,6 +79,12 @@ export const describeActivity = (entry: ActivityEntry): string => {
 
     case "COMMENT_ADDED":
       return `${who} added a comment`;
+
+    case "PR_LINKED":
+      return `${who} linked pull request #${String(details.prNumber ?? "")}`;
+
+    case "PR_UNLINKED":
+      return `${who} unlinked pull request #${String(details.prNumber ?? "")}`;
 
     default:
       return `${who} made a change`;

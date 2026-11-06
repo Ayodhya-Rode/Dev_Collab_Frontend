@@ -9,6 +9,7 @@ import type { Assignee, Priority, Task, TaskStatus } from "../types";
 import ConfirmDialog from "./ConfirmDialog";
 import { buttonClass, inputClass, labelClass } from "./ui";
 import TaskDiscussion from "./TaskDiscussion";
+import TaskPullRequests from "./TaskPullRequests";
 
 const dateInputClass = `${inputClass} [color-scheme:dark]`;
 
@@ -288,6 +289,11 @@ export default function TaskDrawer({
                 {task.description || "No description"}
               </p>
             </div>
+
+            <TaskPullRequests
+              taskId={task.id}
+              onChanged={() => setVersion((v) => v + 1)}
+            />
 
             {archived && (
               <p className="rounded-lg border border-slate-700 bg-slate-800/60 px-3 py-2 text-sm text-slate-300">

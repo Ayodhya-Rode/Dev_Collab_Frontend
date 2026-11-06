@@ -184,3 +184,20 @@ export interface GithubPullRequest {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface PullRequestInfo {
+  number: number;
+  title: string;
+  state: "open" | "closed" | "merged";
+  draft: boolean;
+  authorLogin: string | null;
+}
+
+export interface TaskPrLink {
+  id: string;
+  prNumber: number;
+  url: string | null;
+  linkedBy: { id: string; name: string };
+  createdAt: string;
+  info: PullRequestInfo | null;
+}
