@@ -23,6 +23,8 @@ import {
 import ProgressBar from "../components/ProgressBar";
 import StatTile from "../components/StatTile";
 import TaskBoard from "../components/TaskBoard";
+import GitHubPanel from "../components/GitHubPanel";
+
 
 const apiMessage = (err: unknown, fallback: string) =>
   axios.isAxiosError(err)
@@ -647,6 +649,7 @@ export default function ProjectDetails() {
         projectLeadId={project.teamLeaderId}
         onChanged={loadProject}
       />
+      <GitHubPanel projectId={project.id} />
 
       <ConfirmDialog
         open={confirm !== null}

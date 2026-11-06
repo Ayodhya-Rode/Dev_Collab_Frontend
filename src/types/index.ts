@@ -151,3 +151,36 @@ export interface ActivityEntry {
   createdAt: string;
   user: { id: string; name: string; role: Role };
 }
+
+export interface GithubConnection {
+  repoOwner: string;
+  repoName: string;
+  defaultBranch: string;
+  url: string;
+  connectedBy: { id: string; name: string } | null;
+  createdAt: string;
+}
+
+export interface GithubCommit {
+  sha: string;
+  shortSha: string;
+  message: string;
+  url: string;
+  authorName: string | null;
+  authorLogin: string | null;
+  authorAvatar: string | null;
+  committedAt: string | null;
+}
+
+export interface GithubPullRequest {
+  number: number;
+  title: string;
+  url: string;
+  draft: boolean;
+  authorLogin: string | null;
+  authorAvatar: string | null;
+  branch: string;
+  base: string;
+  createdAt: string;
+  updatedAt: string;
+}
