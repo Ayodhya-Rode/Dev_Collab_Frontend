@@ -201,3 +201,75 @@ export interface TaskPrLink {
   createdAt: string;
   info: PullRequestInfo | null;
 }
+
+export interface DashboardProject {
+  id: string;
+  name: string;
+  status: ProjectStatus;
+  priority: Priority;
+  dueDate: string | null;
+  teamLeader: { id: string; name: string };
+  teams: { id: string; name: string }[];
+  stats: ProjectStats;
+}
+
+export interface TasksByProjectPoint {
+  name: string;
+  completed: number;
+  onTrack: number;
+  overdue: number;
+}
+
+export interface WorkloadPoint {
+  name: string;
+  onTrack: number;
+  overdue: number;
+}
+
+export interface DeadlineTask {
+  id: string;
+  title: string;
+  status: TaskStatus;
+  priority: Priority;
+  dueDate: string;
+  isOverdue: boolean;
+  project: { id: string; name: string };
+}
+
+export interface AdminDashboard {
+  role: "ADMIN";
+  summary: {
+    totalTeams: number;
+    totalEmployees: number;
+    totalProjects: number;
+    completedProjects: number;
+  };
+  projects: DashboardProject[];
+  charts: {
+    projectsByStatus: { status: ProjectStatus; count: number }[];
+    tasksByProject: TasksByProjectPoint[];
+  };
+}
+
+export interface TeamLeaderDashboard {
+  role: "TEAM_LEADER";
+  summary: { teamMembers: number; teamsLed: number; totalProjects: number };
+  projects: DashboardProject[];
+  charts: {
+    tasksByProject: TasksByProjectPoint[];
+    workload: WorkloadPoint[];
+  };
+}
+
+export interface DeveloperDashboard {
+  role: "DEVELOPER";
+  teams: { id: string; name: string }[];
+  selectedTeamId: string | null;
+  summary: { myTasks: number; inProgress: number; completed: number; overdue: number };
+  projects: DashboardProject[];
+  charts: { myTasksByStatus: { status: TaskStatus; count: number }[] };
+  upcomingDeadlines: DeadlineTask[];
+  notifications: null;
+}
+
+export type DashboardData = AdminDashboard | TeamLeaderDashboard | DeveloperDashboard;
